@@ -163,7 +163,7 @@ function love.update(dt)
     groundScroll = scrolling == true and (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH or groundScroll
 
     -- transfer gStateMachine:update(dt) in pause class
-    Pause:update(dt * 10)
+    Pause:update(dt)
 
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}

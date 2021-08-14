@@ -74,8 +74,7 @@ function PlayState:update(dt)
             table.remove(self.pipePairs, k)
         end
     end
-
-    --[[
+    
     -- simple collision between bird and all pipes in pairs
     for k, pair in pairs(self.pipePairs) do
         for l, pipe in pairs(pair.pipes) do
@@ -102,7 +101,6 @@ function PlayState:update(dt)
             score = self.score
         })
     end
-    ]]
 end
 
 function PlayState:render()
