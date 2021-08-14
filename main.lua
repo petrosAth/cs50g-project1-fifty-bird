@@ -66,9 +66,6 @@ local BACKGROUND_LOOPING_POINT = 413
 -- global variable we can use to scroll the map
 scrolling = true
 
--- global variable we can use to pause the game
-game_paused = false
-
 function love.load()
     -- initialize our nearest-neighbor filter
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -166,7 +163,7 @@ function love.update(dt)
     groundScroll = scrolling == true and (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH or groundScroll
 
     -- transfer gStateMachine:update(dt) in pause class
-    Pause:update(dt)
+    Pause:update(dt * 10)
 
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}

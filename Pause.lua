@@ -52,5 +52,5 @@ function Pause:render()
     love.graphics.draw(PAUSE_IMAGE, VIRTUAL_WIDTH / 2 - 35, 64)
     
     love.graphics.setFont(mediumFont)    
-    love.graphics.printf('Press P to Resume!', 0, 140, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf('Press P to Resume!', 0, 146, VIRTUAL_WIDTH, 'center')
 end

@@ -32,16 +32,18 @@ function PlayState:update(dt)
     self.timer = self.timer + dt
 
     -- spawn a new pipe pair every 1.5 to 20 seconds
-    if self.timer > math.random(1.5, 20) then 
+    if self.timer > math.random(1.5, 20) then
+        -- randomize the vertical gap between pipes
+        verticalGap = math.random(90, 120)
         -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
         -- no higher than 10 pixels below the top edge of the screen,
         -- and no lower than a gap length (90 pixels) from the bottom
         local y = math.max(-PIPE_HEIGHT + 10, 
-            math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+            math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - verticalGap - PIPE_HEIGHT))
         self.lastY = y
 
-        -- add a new pipe pair at the end of the screen at our new Y
-        table.insert(self.pipePairs, PipePair(y))
+        -- add a new pipe pair at the end of the screen at our new y with vertical gap equal to verticalGap
+        table.insert(self.pipePairs, PipePair(y, verticalGap))
 
         -- reset timer
         self.timer = 0
@@ -87,7 +89,6 @@ function PlayState:update(dt)
             end
         end
     end
-    ]]
 
     -- update bird based on gravity and input
     self.bird:update(dt)
@@ -101,6 +102,7 @@ function PlayState:update(dt)
             score = self.score
         })
     end
+    ]]
 end
 
 function PlayState:render()
