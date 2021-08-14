@@ -31,8 +31,8 @@ function PlayState:update(dt)
     -- update timer for pipe spawning
     self.timer = self.timer + dt
 
-    -- spawn a new pipe pair every second and a half
-    if self.timer > 2 then
+    -- spawn a new pipe pair every 1.5 to 20 seconds
+    if self.timer > math.random(1.5, 20) then 
         -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
         -- no higher than 10 pixels below the top edge of the screen,
         -- and no lower than a gap length (90 pixels) from the bottom
@@ -73,6 +73,7 @@ function PlayState:update(dt)
         end
     end
 
+    --[[
     -- simple collision between bird and all pipes in pairs
     for k, pair in pairs(self.pipePairs) do
         for l, pipe in pairs(pair.pipes) do
@@ -86,6 +87,7 @@ function PlayState:update(dt)
             end
         end
     end
+    ]]
 
     -- update bird based on gravity and input
     self.bird:update(dt)
