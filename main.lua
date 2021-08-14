@@ -42,6 +42,7 @@ require 'states/TitleScreenState'
 require 'Bird'
 require 'Pipe'
 require 'PipePair'
+require 'Pause'
 
 -- physical screen dimensions
 WINDOW_WIDTH = 1280
@@ -116,7 +117,7 @@ function love.load()
         ['score'] = function() return ScoreState() end
     }
     gStateMachine:change('title')
-
+    
     -- initialize input table
     love.keyboard.keysPressed = {}
 
@@ -134,19 +135,7 @@ function love.keypressed(key)
 
     if key == 'escape' then
         love.event.quit()
-    end
-
-    -- stop scrolling (and pause game) only during 'countdown' and 'play' states
-    if (gStateMachine.currentStateName == 'countdown' or gStateMachine.currentStateName == 'play') and key == 'p' then
-        if not game_paused then
-            game_paused = true
-            sounds['pause']:play()
-            sounds['music']:pause()
-        else
-            game_paused = false
-            sounds['music']:play()
-        end
-    end
+    end    
 end
 
 --[[
@@ -173,18 +162,11 @@ function love.mouse.wasPressed(button)
 end
 
 function love.update(dt)
-    -- stop time (dt) and background scrolling while game is paused
-    if game_paused then
-        -- show static background while the game is paused
-        backgroundScroll = backgroundScroll
-        groundScroll = groundScroll
-    else
-        -- scroll our background and ground, looping back to 0 after a certain amount
-        backgroundScroll = scrolling == true and ((backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT) or backgroundScroll
-        groundScroll = scrolling == true and ((groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH) or groundScroll
+    backgroundScroll = scrolling == true and (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT or backgroundScroll
+    groundScroll = scrolling == true and (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH or groundScroll
 
-        gStateMachine:update(dt)
-    end
+    -- transfer gStateMachine:update(dt) in pause class
+    Pause:update(dt)
 
     love.keyboard.keysPressed = {}
     love.mouse.buttonsPressed = {}
@@ -197,28 +179,10 @@ function love.draw()
     gStateMachine:render()
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
     
-    love.graphics.setFont(smallFont)
-    love.graphics.printf('State name:', 0, VIRTUAL_HEIGHT - 40, VIRTUAL_WIDTH, 'center')
-    love.graphics.printf(gStateMachine.currentStateName, 0, VIRTUAL_HEIGHT - 30, VIRTUAL_WIDTH, 'center')
-    love.graphics.setFont(smallFont)
-    love.graphics.printf('scrolling: ' .. tostring(scrolling), 0, VIRTUAL_HEIGHT - 50, VIRTUAL_WIDTH, 'center')
-
-    
-    pauseImage = love.graphics.newImage('pause.png')
-    if game_paused then
-        love.graphics.setColor(0, 0, 0, 0.75)
-        love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-        --love.graphics.setBackgroundColor()
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(pauseImage, VIRTUAL_WIDTH / 2 - 35, VIRTUAL_HEIGHT / 2 - 80)
-
-        
-        
-        love.graphics.setFont(mediumFont)
-        --love.graphics.printf('Score: ' .. tostring(self.score), 0, 100, VIRTUAL_WIDTH, 'center')
-    
-        love.graphics.printf('Press P to Resume!', 0, 160, VIRTUAL_WIDTH, 'center')
+    -- if game is paused show pause screen overlay
+    if Pause.status then        
+        Pause:render()
     end
-
+    
     push:finish()
 end
